@@ -1,6 +1,9 @@
 package org.zutjmx.spingcloud.mcsv.usuarios.models.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "usuarios")
@@ -9,11 +12,15 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "<::>El nombre no puede estar vacio<::>")
     private String nombre;
 
     @Column(unique = true)
+    @NotEmpty(message = "<::>El email no puede estar vacio<::>")
+    @Email(message = "<::>No se cumple con el formato a@b.c<::>")
     private String email;
 
+    @NotBlank(message = "<::>La contraseña no puede estar vacio<::>")
     private String password;
 
     public Long getId() {

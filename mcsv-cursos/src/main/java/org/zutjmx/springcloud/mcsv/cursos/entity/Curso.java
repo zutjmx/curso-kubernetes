@@ -1,6 +1,8 @@
 package org.zutjmx.springcloud.mcsv.cursos.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "cursos")
@@ -10,6 +12,7 @@ public class Curso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "<::>El nombre no puede estar vacio<::>")
     private String nombre;
 
     public Long getId() {

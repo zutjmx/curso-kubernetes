@@ -3,11 +3,15 @@ package org.zutjmx.springcloud.mcsv.cursos.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.zutjmx.springcloud.mcsv.cursos.entity.Curso;
 import org.zutjmx.springcloud.mcsv.cursos.services.CursoService;
 
+import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -30,7 +34,11 @@ public class CursoController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> crear(@RequestBody Curso curso) {
+    public ResponseEntity<?> crear(@Valid @RequestBody Curso curso, BindingResult result) {
+        ResponseEntity<Map<String, String>> errores = getErrores(result);
+        if (errores != null) {
+            return errores;
+        }
         Curso cursoDb = cursoService.guardar(curso);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -38,7 +46,15 @@ public class CursoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editar(@RequestBody Curso curso, @PathVariable("id") Long id) {
+    public ResponseEntity<?> editar(@Valid @RequestBody Curso curso,
+                                    BindingResult result,
+                                    @PathVariable("id") Long id) {
+
+        ResponseEntity<Map<String, String>> errores = getErrores(result);
+        if (errores != null) {
+            return errores;
+        }
+
         Optional<Curso> cursoOptional = cursoService.porId(id);
         if (cursoOptional.isPresent()) {
             Curso cursoDb = cursoOptional.get();
@@ -59,4 +75,21 @@ public class CursoController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    private ResponseEntity<Map<String, String>> getErrores(BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errores = new HashMap<>();
+            result.getFieldErrors().forEach(fieldError -> {
+                errores.put(fieldError.getField(),
+                        "::El campo "
+                                .concat(fieldError.getField())
+                                .concat(" ")
+                                .concat(fieldError.getDefaultMessage())
+                                .concat("::"));
+            });
+            return ResponseEntity.badRequest().body(errores);
+        }
+        return null;
+    }
+
 }
