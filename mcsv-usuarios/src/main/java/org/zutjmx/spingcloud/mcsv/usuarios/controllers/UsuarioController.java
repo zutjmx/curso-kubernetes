@@ -34,14 +34,14 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<?> crear(@Valid @RequestBody Usuario usuario, BindingResult result) {
 
-        ResponseEntity<Map<String, String>> mensajeEmail = validaCorreo(usuario);
-        if (mensajeEmail != null) {
-            return mensajeEmail;
-        }
-
         ResponseEntity<Map<String, String>> errores = getErrores(result);
         if (errores != null) {
             return errores;
+        }
+
+        ResponseEntity<Map<String, String>> mensajeEmail = validaCorreo(usuario);
+        if (mensajeEmail != null) {
+            return mensajeEmail;
         }
 
         return ResponseEntity
@@ -112,7 +112,7 @@ public class UsuarioController {
 
     private ResponseEntity<Map<String, String>> validaCorreo(Usuario usuario) {
         if (!usuario.getEmail().isEmpty()
-                && usuarioService.porEmail(usuario.getEmail()).isPresent()) {
+                && usuarioService.existePorEmail(usuario.getEmail())) {
             Map<String, String> mensajeEmail = new HashMap<>();
             mensajeEmail.put("mensaje",":: Ya existe un usuario con el correo <".concat(usuario.getEmail()).concat("> en la tabla usuarios ::"));
             return ResponseEntity.badRequest().body(mensajeEmail);
