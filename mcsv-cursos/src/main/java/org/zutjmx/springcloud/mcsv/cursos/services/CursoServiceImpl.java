@@ -11,6 +11,7 @@ import org.zutjmx.springcloud.mcsv.cursos.repositories.CursoRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CursoServiceImpl implements CursoService {
@@ -34,6 +35,32 @@ public class CursoServiceImpl implements CursoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Optional<Curso> porIdConUsuarios(Long id) {
+        Optional<Curso> optionalCurso = cursoRepository.findById(id);
+        if (optionalCurso.isPresent()) {
+            Curso curso = optionalCurso.get();
+            if (!curso.getCursoUsuarios().isEmpty()) {
+
+                /*List<Long> ids = curso
+                        .getCursoUsuarios()
+                        .stream()
+                        .map(cursoUsuario -> cursoUsuario.getUsuarioId())
+                        .collect(Collectors.toList());*/ /*Para JDK < 16*/
+
+                List<Long> ids = curso
+                        .getCursoUsuarios()
+                        .stream()
+                        .map(CursoUsuario::getUsuarioId).toList();
+                List<Usuario> usuarios = usuarioClientRest.obtenerAlumnosPorCurso(ids);
+                curso.setUsuarios(usuarios);
+            }
+            return Optional.of(curso);
+        }
+        return Optional.empty();
+    }
+
+    @Override
     @Transactional
     public Curso guardar(Curso curso) {
         return cursoRepository.save(curso);
@@ -43,6 +70,12 @@ public class CursoServiceImpl implements CursoService {
     @Transactional
     public void eliminar(Long id) {
         cursoRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void eliminarCursoUsuarioPorId(Long id) {
+        cursoRepository.eliminarCursoUsuarioPorId(id);
     }
 
     @Override

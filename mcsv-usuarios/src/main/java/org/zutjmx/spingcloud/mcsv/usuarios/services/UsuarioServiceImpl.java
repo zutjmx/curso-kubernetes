@@ -3,6 +3,7 @@ package org.zutjmx.spingcloud.mcsv.usuarios.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.zutjmx.spingcloud.mcsv.usuarios.clients.CursoClienteRest;
 import org.zutjmx.spingcloud.mcsv.usuarios.models.entity.Usuario;
 import org.zutjmx.spingcloud.mcsv.usuarios.repositories.UsuarioRepository;
 
@@ -14,6 +15,9 @@ public class UsuarioServiceImpl implements UsuarioService{
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private CursoClienteRest cursoClienteRest;
 
     @Override
     @Transactional(readOnly = true)
@@ -37,6 +41,13 @@ public class UsuarioServiceImpl implements UsuarioService{
     @Transactional
     public void eliminar(Long id) {
         usuarioRepository.deleteById(id);
+        cursoClienteRest.eliminarCursoUsuarioPorId(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Usuario> listarPorIds(Iterable<Long> ids) {
+        return (List<Usuario>) usuarioRepository.findAllById(ids);
     }
 
     @Override
