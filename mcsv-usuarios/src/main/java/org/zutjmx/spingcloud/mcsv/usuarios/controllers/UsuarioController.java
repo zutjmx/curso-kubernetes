@@ -18,8 +18,8 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @GetMapping("/")
-    public List<Usuario> listar() {
-        return usuarioService.Listar();
+    public Map<String,List<Usuario>> listar() {
+        return Collections.singletonMap("users",usuarioService.Listar());
     }
 
     @GetMapping("/{id}")
@@ -69,7 +69,7 @@ public class UsuarioController {
                 return ResponseEntity
                         .badRequest()
                         .body(Collections
-                                .singletonMap("mensaje",":: Ya existe un usuario con el correo <"
+                                .singletonMap("mensaje",":: Ya existe un usuario con el correo electrónico <"
                                         .concat(usuario.getEmail())
                                         .concat("> en la tabla usuarios ::")));
             }
@@ -119,7 +119,9 @@ public class UsuarioController {
         if (!usuario.getEmail().isEmpty()
                 && usuarioService.existePorEmail(usuario.getEmail())) {
             Map<String, String> mensajeEmail = new HashMap<>();
-            mensajeEmail.put("mensaje",":: Ya existe un usuario con el correo <".concat(usuario.getEmail()).concat("> en la tabla usuarios ::"));
+            mensajeEmail.put("mensaje",":: Ya existe un usuario con el correo electrónico <"
+                    .concat(usuario.getEmail())
+                    .concat("> en la tabla usuarios ::"));
             return ResponseEntity.badRequest().body(mensajeEmail);
         }
         return null;
