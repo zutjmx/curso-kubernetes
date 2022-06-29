@@ -6,7 +6,7 @@ import org.zutjmx.springcloud.mcsv.cursos.models.Usuario;
 
 import java.util.List;
 
-@FeignClient(name = "mcsv-usuarios",url = "localhost:8001")
+@FeignClient(name = "mcsv-usuarios",url = "mcsv-usuarios:8001"/*url = "localhost:8001"*/)
 public interface UsuarioClientRest {
 
     @GetMapping("/{id}")
