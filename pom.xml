@@ -20,6 +20,7 @@
     <modules>
         <module>mcsv-usuarios</module>
         <module>mcsv-cursos</module>
+        <module>mcsv-gateway</module>
     </modules>
 
     <properties>

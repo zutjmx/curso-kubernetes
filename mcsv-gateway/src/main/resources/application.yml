@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: mcsv-cursos
+          uri: lb://mcsv-cursos
+          predicates:
+            - Path=/api/cursos/**
+          filters:
+            - StripPrefix=2
+        - id: mcsv-usuarios
+          uri: lb://mcsv-usuarios
+          predicates:
+            - Path=/api/usuarios/**
+          filters:
+            - StripPrefix=2
