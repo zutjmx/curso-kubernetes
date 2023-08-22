@@ -117,6 +117,11 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.listarPorIds(ids));
     }
 
+    @GetMapping("/authorized")
+    public Map<String, Object> authorized(@RequestParam(name = "code") String code) {
+        return Collections.singletonMap("code",code);
+    }
+
     private ResponseEntity<Map<String, String>> getErrores(BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errores = new HashMap<>();
